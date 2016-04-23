@@ -53,9 +53,14 @@ namespace AndroidAppLauncher  {
         public bool LaunchApp(string packageName){
             _param[0] = packageName;
             bool isLaunched = currentActivity.Call<bool>("LaunchApp", _param);
-
             return isLaunched;
         }
+
+		public byte[][] getIcons(){
+			
+			return currentActivity.Call<byte[][]>("GetIcons");
+
+		}
         
     }
     #endif
