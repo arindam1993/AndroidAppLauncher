@@ -1,4 +1,4 @@
-package com.PlasticWater.AppLauncherPlugin;
+package com.plasticwater.applauncherlib;
 
 import android.os.AsyncTask;
 import android.util.Log;
@@ -7,18 +7,18 @@ import android.util.Log;
  * Uses AppList Builder in the background to prevent a UI freeze.
  * Created by Arindam on 4/26/2016.
  */
-public class AppDataLoaderTask extends AsyncTask<MainActivity.AppListBuilder, Integer, Integer> {
+public class AppDataLoaderTask extends AsyncTask<AppListBuilder, Integer, Integer> {
     @Override
     protected void onPostExecute(Integer integer) {
         super.onPostExecute(integer);
         builder.progress = 100;
     }
 
-    private MainActivity.AppListBuilder builder;
+    private AppListBuilder builder;
 
     //Run the applist builder in the backgound
     @Override
-    protected Integer doInBackground(MainActivity.AppListBuilder... params) {
+    protected Integer doInBackground(AppListBuilder... params) {
         builder = params[0];
 
         builder.buildAppList();;
@@ -29,7 +29,7 @@ public class AppDataLoaderTask extends AsyncTask<MainActivity.AppListBuilder, In
     protected void onPreExecute() {
         super.onPreExecute();
 
-        Log.d(MainActivity.DEBUG_TAG, "Starting data loader AsyncTask");
+        Log.d(AppListBuilder.DEBUG_TAG, "Starting data loader AsyncTask");
     }
 
 }

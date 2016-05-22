@@ -9,16 +9,18 @@ namespace AndroidAppLauncher  {
         //Cache the reference to the activity
         AndroidJavaObject currentActivity;
 
+        AndroidJavaObject appDataBridge;
+
         private static AppLauncher _instance;
 
         public int Progress{get; private set;}
 
-
+        private bool _started = false;
         private string _appIconDirectory = null;
         public string AppIconDirectory{
             get{
                 if( _appIconDirectory == null){
-                    _appIconDirectory = currentActivity.Call<string>("GetAbsolutePathToIcons");
+                    _appIconDirectory = appDataBridge.Call<string>("GetAbsolutePathToIcons");
                 }
 
                 return _appIconDirectory;
@@ -47,6 +49,15 @@ namespace AndroidAppLauncher  {
            
             using(AndroidJavaClass unity = new AndroidJavaClass ("com.unity3d.player.UnityPlayer")){
                 currentActivity = unity.GetStatic<AndroidJavaObject> ("currentActivity");
+
+                Debug.Assert(currentActivity!=null, "Current ACtivity is null");
+                AndroidJavaObject currentContext = currentActivity.Call<AndroidJavaObject>("getApplicationContext");
+
+                Debug.Assert(currentContext!=null, "Curent Context is null");
+
+                object[] _bridgeParams = {currentContext};
+
+                appDataBridge = new AndroidJavaObject("com.plasticwater.applauncherlib.UnityAppLauncherBridge", _bridgeParams);
             }
 
             _param = new string[1];
@@ -56,16 +67,19 @@ namespace AndroidAppLauncher  {
 
         public void StartBuildingAppList(string regex){
             _param[0] = regex;
-             currentActivity.Call<int>("StartBuildingAppList", _param);
+             //currentActivity.Call<int>("StartBuildingAppList", _param);
+            appDataBridge.Call<int>("StartBuildingAppList", _param);
              
+            _started = true;
         }
 
         public void UpdateProgress(){
-            Progress = currentActivity.Call<int>("GetAppListProgress");
+            if(_started )
+                Progress = appDataBridge.Call<int>("GetAppListProgress");
         }
 
         public List<string> GetAppList(){
-            string apps = currentActivity.Call<string>("GetAppList");
+            string apps = appDataBridge.Call<string>("GetAppList");
 
             string[] _list = apps.Split('\t');
 
@@ -80,7 +94,7 @@ namespace AndroidAppLauncher  {
             if (Progress < 100) return false;
 
             _param[0] = packageName;
-            bool isLaunched = currentActivity.Call<bool>("LaunchApp", _param);
+            bool isLaunched = appDataBridge.Call<bool>("LaunchApp", _param);
             return isLaunched;
         }
 

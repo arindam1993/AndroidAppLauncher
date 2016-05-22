@@ -24,6 +24,7 @@ dependencies {
     compile 'com.android.support:appcompat-v7:23.2.1'
     compile 'com.android.support:design:23.2.1'
     compile files('src/androidTest/java/classes.jar')
+    compile files('E:/Development/AndroidAppLauncher/UnityAppLauncherTest/applauncherlib/build/outputs/AppLauncherLib.jar')
 }
 
 //task to delete the old jar
